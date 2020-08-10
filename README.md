@@ -1,16 +1,17 @@
 # HomeQuest Back end
 **API:**
-| Verb | Path                 | Action   | Description |
-|------|----------------------|----------|-------------|
+| Verb | Path                 | Action   | Description | Params |
+|------|----------------------|----------|-------------|--------|
 | GET  | /                    | Closure  |            |
-| POST | /gang                | store    |            |
-| GET  | /gang/{id}           | show     |            |
-| GET  | /gang/{id}/heroes    | heroes   |            |
-| PUT  | /gang/{id}           | update   |            |
-| POST | /hero                | store    |            |
-| PUT  | /hero/{id}           | update   |            |
-| GET  | /hero/{id}           | show     |            |
-| POST | /quest               | store    |            |
-| PUT  | /quest/{id}          | update   |            |
-| PUT  | /quest/{id}/progress | progress |            |
-| GET  | /quest/{id}          | show     |            |
+| POST | /gang                | store    | создать банду | name |
+| GET  | /gang/{id}           | show     | полчить данные о банду | |
+| GET  | /gang/{id}/heroes    | heroes   | получить список героев в банде | |
+| PUT  | /gang/{id}           | update   | изменить данные о банде | name |
+| POST | /hero                | store    | создать героя | login, name, avatar, gangId |
+| PUT  | /hero/{id}           | update   | изменить данные о герое | login, name, avatar |
+| GET  | /hero/{id}           | show     | показать данные о герое | |
+| GET  | /hero/{id}/avaliableQuests | showWithAvaliableQuests | показать все квесты доступные для героя | |
+| POST | /quest               | store    | создать квест | title, description, reward, heroId |
+| PUT  | /quest/{id}          | update   | обновить данные квеста | title, description, reward |
+| PUT  | /quest/{id}/progress | progress | взять квест | heroId |
+| GET  | /quest/{id}          | show     | показать данные квеста | |
