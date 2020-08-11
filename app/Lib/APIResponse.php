@@ -10,6 +10,7 @@ class APIResponse
 {
     const CODE_SUCCESS = 200;
     const CODE_VALUES_NOT_PASSED = 400;
+    const CODE_NOT_AUTH = 401;
     const CODE_NOT_FOUND = 404;
     const CODE_INVALID_STATE = 405;
 
@@ -41,6 +42,9 @@ class APIResponse
 
     public function setData($data) : APIResponse
     {
+        if($data instanceof Model){
+            $data = $data->toArray();
+        }
         $this->data = $data;
         return $this;
     }
@@ -58,7 +62,7 @@ class APIResponse
 
 
     public static function fail(Exception $e){
-        return self::make($e->getCode())->setMsg($e->getMessage())->complete();
+        return self::make((int) $e->getCode())->setMsg($e->getMessage())->complete();
     }
 
     private function shalowCopy() : stdClass

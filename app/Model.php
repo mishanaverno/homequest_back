@@ -9,9 +9,14 @@ use stdClass;
 
 abstract class Model
 {
+    const COLUMN_VIRTUAL = 'virtual';
+    const COLUMN_IMMUTABLE = 'immutable';
+    const COLUMN_SIMPLE = '';
+
     protected $id;
     protected $table;
-    protected $columns;
+    protected $columns = [];
+    protected $hidden = [];
 
     protected function __construct($id = null)
     {
@@ -22,21 +27,30 @@ abstract class Model
      * Find by id
      *
      * @param int $id
-     * @return Model
+     * @return 
      */
     public static function find($id = 0)
     {
         try{
             $model = static::make($id);
-            $result = (array) DB::table($model->table)->find($id);
+            $result = $model->_get();
         }catch (Exception $e){
-            throw new Exception($e->getMessage(), $e->getCode());
+            throw $e;
         }
         if ($result) {
-            $model->setBulk($result);
+            $model->setFromDB($result);
             return $model;
         } else { 
-            throw new Exception(static::class." : Element not found", 404);
+            throw new Exception(static::class." : Element not found", APIResponse::CODE_NOT_FOUND);
+        }
+    }
+
+    protected function _get() : array
+    {   
+        try{
+            return (array) DB::table($this->table)->find($this->id);
+        } catch (Exception $e){
+            throw $e;
         }
     }
 
@@ -44,29 +58,42 @@ abstract class Model
      * Undocumented function
      *
      * @param int $id
-     * @return Model
+     * @return 
      */
     public static function make($id = null)
     {
         return new static($id);
     }
 
+    protected function setFromDB(array $values) 
+    {
+        if(is_array($values)){
+            foreach($values as $column => $value){
+                if ((array_key_exists($column, $this->columns) || $column == 'id') && $value){
+                    $this->{$column} = $value;
+                }
+            }
+        }
+        return $this;
+    }
     /**
      * Bulk set values
      *
      * @param array $values
-     * @return Model
+     * @return 
      */
-    public function setBulk(array $values) : Model
+    public function setBulk(array $values)
     {
         if(is_array($values)){
             foreach($values as $column => $value){
-                $this->set($column, $value);
+                if ($this->isImmutableColumn($column)) continue;
+                $this->set($column, $value);   
             }
         }
         return $this;
     }
 
+    
     /**
      * Set single value if column exists in $columns
      *
@@ -76,9 +103,7 @@ abstract class Model
      */
     public function set(string $column, $value)
     {
-        if (array_key_exists($column, $this->columns) && $value){
-            $this->{$column} = $this->getTyped($column,$value);
-        }
+        $this->{$column} = $value;
         return $this;
     }
 
@@ -87,9 +112,11 @@ abstract class Model
         $values = [];
         foreach($this->columns as $column => $type){
             if (isset($this->{$column})){
-                $values[$column] = $this->getTyped($column,$this->{$column});
+                if ($this->isVirtualColumn($column)) continue;
+                $values[$column] = $this->{$column};
             }
         }
+        $values = $this->_morph($values);
         if(empty($values)) throw new Exception("Empty values", APIResponse::CODE_VALUES_NOT_PASSED);
 
         $values['updated_at'] = date('Y-m-d H:i:s');
@@ -101,11 +128,13 @@ abstract class Model
                 $this->id = DB::table($this->table)->insertGetId($values);
             }
         }catch (Exception $e){
-            throw new Exception($e->getMessage(), $e->getCode());
+            throw $e;
         }
         return $this;
     }
-
+    protected function _morph($values){
+        return $values;
+    }
     public function isFound() : Bool
     {
         return $this->id !== 0;
@@ -115,17 +144,20 @@ abstract class Model
     {
         return $this->id;
     }
-
-    private function getTyped($column, $value){
-        switch ($this->columns[$column]) {
-            case 'int':
-                $value = intval($value);
-                break;
-        }
-        return $value;
+    private function isVirtualColumn($column){
+        return isset($this->columns[$column]) && $this->columns[$column] == Model::COLUMN_VIRTUAL;
     }
-    public function __call($name, $arguments)
+    private function isImmutableColumn($column){
+        return isset($this->columns[$column]) && $this->columns[$column] == Model::COLUMN_IMMUTABLE;
+    }
+    
+    public function toArray() : array
     {
-        
+        $array = [];
+        foreach ($this as $column => $value){
+            if(!in_array($column, ['columns', 'table', 'hidden']) && !in_array($column, $this->hidden)) $array[$column] = $value;
+        }
+        return $array;
     }
+
 }

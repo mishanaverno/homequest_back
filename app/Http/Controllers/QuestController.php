@@ -30,8 +30,8 @@ class QuestController extends Controller
     public function store(Request $request)
     {
         try {
-            $heroId = Hero::find($request->post('heroId'))->getId();
-            $quest = Quest::make()->setBulk($request->all())->saveByHero();
+            $hero = Hero::find($request->post('heroId'));
+            $quest = Quest::make()->setBulk($request->all())->saveByHero($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Quest created')->complete($quest);
         } catch (Exception $e){
             APIResponse::fail($e);

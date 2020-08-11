@@ -19,10 +19,12 @@ class Quest extends Model
 
     protected $table = 'quest';
     protected $columns = [
-        'title' => 'string',
-        'description' => 'string',
-        'reward' => 'int',
-        'state' => 'string',
+        'title' => Model::COLUMN_STRING,
+        'description' => Model::COLUMN_STRING,
+        'reward' => Model::COLUMN_INT,
+        'state' => Model::COLUMN_IMMUTABLE,
+        'customer' => Model::COLUMN_VIRTUAL,
+        'performer' => Model::COLUMN_VIRTUAL,
     ];
 
     public function saveByHero($id) : Quest
@@ -48,7 +50,7 @@ class Quest extends Model
         if ($this->isOpen()){
             try {
                 DB::beginTransaction();
-                $this->setBulk(['state' => Quest::STATE_PROGRESS])->save();
+                $this->setState(Quest::STATE_PROGRESS)->save();
                 DB::table('quest_hero')->insert([
                     'hero_id' => $heroId,
                     'quest_id' => $this->id,
@@ -70,7 +72,7 @@ class Quest extends Model
         if ($this->isProgress()){
             try {
                 DB::beginTransaction();
-                $this->setBulk(['state' => Quest::STATE_PENDING])->save();
+                $this->setState(Quest::STATE_PENDING)->save();
                 DB::commit();
             } catch (Exception $e){
                 DB::rollBack();
@@ -87,7 +89,7 @@ class Quest extends Model
         if ($this->isPanding()){
             try {
                 DB::beginTransaction();
-                $this->setBulk(['state' => Quest::STATE_COMPLETE])->save();
+                $this->setState(Quest::STATE_COMPLETE)->save();
                 DB::commit();
             } catch (Exception $e){
                 DB::rollBack();
@@ -104,7 +106,7 @@ class Quest extends Model
         if ($this->isPanding()){
             try {
                 DB::beginTransaction();
-                $this->setBulk(['state' => Quest::STATE_OPEN])->save();
+                $this->setState(Quest::STATE_OPEN)->save();
                 DB::commit();
             } catch (Exception $e){
                 DB::rollBack();
@@ -121,7 +123,7 @@ class Quest extends Model
         if ($this->isOpen()){
             try {
                 DB::beginTransaction();
-                $this->setBulk(['state' => Quest::STATE_DECLINED])->save();
+                $this->setState(Quest::STATE_DECLINED)->save();
                 DB::commit();
             } catch (Exception $e){
                 DB::rollBack();
@@ -132,6 +134,11 @@ class Quest extends Model
         }
         return $this;
     }
+    private function setState($state) : Quest
+    {
+        $this->state = $state;
+        return $this;
+    }
     private function isOpen(){
         return isset($this->state) && $this->state == Quest::STATE_OPEN;
     }
@@ -140,5 +147,12 @@ class Quest extends Model
     }
     private function isPanding(){
         return isset($this->state) && $this->state == Quest::STATE_PENDING;
+    }
+
+    private function setCustomer($hero){
+        $this->customer = $hero;
+    }
+    private function setPerformer($hero){
+        $this->performer = $hero;
     }
 }

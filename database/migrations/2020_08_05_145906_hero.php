@@ -15,9 +15,11 @@ class Hero extends Migration
     {
         Schema::create('hero', function (Blueprint $table) {
             $table->id();
-            $table->string('login',10)->unique();
-            $table->string('name',100);
-            $table->string('avatar',255);
+            $table->string('login', 20)->unique();
+            $table->string('name', 100)->nullable();
+            $table->string('avatar', 255)->nullable();
+            $table->string('password', 60)->unique();
+            $table->string('api_token', 60)->unique();
             $table->timestamps();
         });
     }

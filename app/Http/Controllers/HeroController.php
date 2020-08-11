@@ -30,8 +30,11 @@ class HeroController extends Controller
     public function store(Request $request)
     {
         try{
-            $gang = Gang::find($request->post('gangId'));
-            $hero = Hero::make()->setBulk($request->all())->saveToGang($gang->getId());
+            $hero = Hero::make()
+                ->setBulk($request->except('password'))
+                ->setPassword($request->get('password'))
+                ->generateApiToken()
+                ->save();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Hero created')->complete($hero);
         }catch (Exception $e){
             APIResponse::fail($e);
