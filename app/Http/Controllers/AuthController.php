@@ -33,8 +33,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try{
-            $login = $request->post('login');
-            Hero::findByLogin($login)->generateApiToken()->save();
+            Hero::findByApiToken($request->cookie('api_token'))->generateApiToken()->save();
             APIResponse::make(200)->setMsg('Logout complete')->complete();
         } catch (Exception $e){
             APIResponse::fail($e);

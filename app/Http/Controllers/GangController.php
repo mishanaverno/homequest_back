@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Gang;
+use App\Hero;
 use App\Lib\APIResponse;
 use Exception;
 use Illuminate\Http\Request;
@@ -30,7 +31,8 @@ class GangController extends Controller
     public function store(Request $request)
     {
         try{
-            $gang = Gang::make()->setBulk($request->all())->save();
+            $hero = Hero::find($request->get('hero_id'));
+            $gang = Gang::make()->setBulk($request->all())->save()->setCreator($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Gang : element created")->complete($gang);
         }catch(Exception $e){
             APIResponse::fail($e);
@@ -65,7 +67,18 @@ class GangController extends Controller
         try{
             $gang = Gang::find($id);
             $gang->setBulk($request->all())->save();
-            APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg( "Gang : element updated")->complete($gang);
+            APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Gang : element updated")->complete($gang);
+        } catch (Exception $e){
+            APIResponse::fail($e);
+        }
+    }
+
+    public function join(Request $request, $id)
+    {
+        try{
+            $hero = Hero::find($request->get('hero_id'));
+            $gang = Gang::find($id)->joinHero($hero->getId());
+            APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Gang : hero Joined")->complete($gang);
         } catch (Exception $e){
             APIResponse::fail($e);
         }

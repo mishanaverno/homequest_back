@@ -17,6 +17,7 @@ class GangHero extends Migration
             $table->id();
             $table->bigInteger('gang_id')->unsigned();
             $table->bigInteger('hero_id')->unsigned();
+            $table->tinyInteger('creator')->unsigned()->default(0);
         });
     }
 

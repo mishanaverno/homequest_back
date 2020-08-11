@@ -45,27 +45,7 @@ class Hero extends Model
             throw $e;
         }
     }
-    /**
-     * save hero 
-     *
-     * @param int $id
-     * @return Hero
-     */
-    public function saveToGang(int $id) : Hero
-    {   
-        try{
-            DB::beginTransaction();
-            DB::table('gang_hero')->insert([
-                'gang_id' => $id,
-                'hero_id' => $this->id
-            ]);
-            DB::commit();
-        }catch (Exception $e){
-            DB::rollBack();
-            throw $e;
-        }
-        return $this;
-    }
+    
     public function setPassword($password) : Hero
     {
         if($password){
@@ -73,6 +53,7 @@ class Hero extends Model
         }
         return $this;
     }
+
     public function generateApiToken() : Hero
     {
         $retries = 100;
@@ -91,7 +72,11 @@ class Hero extends Model
     protected function _get() : array
     {
         try{
-            $res =  (array) DB::table('hero')->where('hero.id', $this->id)->leftJoin('gang','gang.id','=','hero.id')->first(['hero.*','gang.name as gang']);
+            $res =  (array) DB::table('hero')
+                ->where('hero.id', $this->id)
+                ->leftJoin('gang_hero','hero.id','=','gang_hero.id')
+                ->first(['hero.*','gang_hero.id as gang']);
+            var_dump($res);
             return $res;
         } catch (Exception $e){
             throw $e;
