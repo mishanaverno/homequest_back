@@ -29,15 +29,16 @@ abstract class Model
      * @param int $id
      * @return 
      */
-    public static function find($id = 0)
+    public static function find($value = 0, $column = 'id')
     {
         try{
-            $model = static::make($id);
-            $result = $model->_get();
+            $model = static::make(0);
+            $result = $model->_get($value, $column);
         }catch (Exception $e){
             throw $e;
         }
         if ($result) {
+            $model->id = $result['id'];
             $model->setFromDB($result);
             return $model;
         } else { 
@@ -45,10 +46,10 @@ abstract class Model
         }
     }
 
-    protected function _get() : array
+    protected function _get($value, $column) : array
     {   
         try{
-            return (array) DB::table($this->table)->find($this->id);
+            return (array) DB::table($this->table)->where($column, $value)->get()->first();
         } catch (Exception $e){
             throw $e;
         }
@@ -103,7 +104,9 @@ abstract class Model
      */
     public function set(string $column, $value)
     {
-        $this->{$column} = $value;
+        if ($value && array_key_exists($column, $this->columns)){
+            $this->{$column} = $value;
+        }
         return $this;
     }
 

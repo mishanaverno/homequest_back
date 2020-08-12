@@ -10,6 +10,7 @@ class APIResponse
 {
     const CODE_SUCCESS = 200;
     const CODE_VALUES_NOT_PASSED = 400;
+    const CODE_NOT_PERMISSIONED = 402;
     const CODE_NOT_AUTH = 403;
     const CODE_NOT_FOUND = 404;
     const CODE_INVALID_STATE = 405;
@@ -53,7 +54,7 @@ class APIResponse
     public function complete($data = null){
         if ($data) $this->setData($data);
         
-        //header('Content-Type: application/json');
+        header('Content-Type: application/json');
         echo json_encode($this->shalowCopy());
     }
 

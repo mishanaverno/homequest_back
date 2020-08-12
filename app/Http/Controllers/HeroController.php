@@ -56,6 +56,21 @@ class HeroController extends Controller
             APIResponse::fail($e);
         }
     }
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showSelf(Request $request)
+    {
+        try{
+            $hero = Hero::findByApiToken($request->cookie('api_token'))->getQuests();
+            APIResponse::found($hero);
+        } catch (Exception $e){
+            APIResponse::fail($e);
+        }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -64,10 +79,10 @@ class HeroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         try{
-            $hero = Hero::find($id);
+            $hero = Hero::findByApiToken($request->cookie('api_token'));
             $hero->setBulk($request->all())->save();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Hero updated")->complete($hero);
         } catch (Exception $e){

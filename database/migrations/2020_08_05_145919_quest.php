@@ -15,10 +15,13 @@ class Quest extends Migration
     {
         Schema::create('quest', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('customer_id')->unsigned();
+            $table->bigInteger('performer_id')->unsigned()->nullable();
+            $table->bigInteger('gang_id')->unsigned();
             $table->string('title', 100);
             $table->string('description',255);
             $table->integer('reward')->unsigned();
-            $table->enum('state',['open','pending', 'progress', 'complete', 'declined'])->default('open');
+            $table->enum('state',['open', 'progress', 'pending', 'complete', 'declined'])->default('open');
             $table->timestamps();
         });
     }
