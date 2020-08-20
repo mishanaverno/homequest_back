@@ -1,4 +1,4 @@
-# HomeQuest Back-end v 0.1
+# HomeQuest Back-end v 0.1.1
 **API:**
 | Verb | Path                 | Action   | Description | Params |
 |------|----------------------|----------|-------------|--------|
