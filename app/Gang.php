@@ -12,8 +12,25 @@ class Gang extends Model
     protected $table = 'gang';
     protected $columns = [
         'name' => Model::COLUMN_SIMPLE,
-        'creator' => Model::COLUMN_IMMUTABLE
+        'creator' => Model::COLUMN_IMMUTABLE,
+        'standart_reward' => Model::COLUMN_VIRTUAL
     ];
+
+    protected function _get($value, $column) : array
+    {   
+        try{
+            $res = (array) DB::table($this->table)->where($column, $value)->get()->first();
+            $res['standart_reward'] = $this->_getStandartReward();
+            return $res;
+        } catch (Exception $e){
+            throw $e;
+        }
+    }
+
+    private function _getStandartReward() : int
+    {
+        return 10;
+    }
 
     public function setCreator($hero_id)
     {

@@ -142,4 +142,11 @@ class Hero extends Model
         $this->style += $style;
         return $this;
     }
+
+    public function removeStyle(int $style) : Hero
+    {
+        if ($this->style < $style) throw new Exception("Not enought styly", APIResponse::CODE_INVALID_DATA);
+        $this->style -= $style;
+        return $this;
+    }
 }
