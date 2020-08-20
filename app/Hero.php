@@ -18,10 +18,8 @@ class Hero extends Model
         'gang' => Model::COLUMN_VIRTUAL,
         'password' => Model::COLUMN_IMMUTABLE,
         'api_token' => Model::COLUMN_IMMUTABLE,
-        'avaliable_quests' => Model::COLUMN_VIRTUAL,
-        'created_quests' => Model::COLUMN_VIRTUAL,
         'gangs' => Model::COLUMN_VIRTUAL,
-        'style_points' => Model::COLUMN_VIRTUAL
+        'style' => Model::COLUMN_IMMUTABLE
     ];
 
     protected $hidden = [
@@ -36,12 +34,6 @@ class Hero extends Model
                 ->where("hero.{$column}", $value)
                 ->get(['hero.*'])
                 ->first();
-
-            $result['style_points'] =  DB::table('quest')
-                ->selectRaw('SUM(reward) as style')
-                ->where('quest.state','complete')
-                ->where('quest.performer_id', $result['id'])
-                ->pluck('style')->first();
 
             $result['gangs'] = DB::table('gang_hero')
                 ->leftJoin('gang','gang_hero.gang_id','gang.id')
@@ -110,24 +102,31 @@ class Hero extends Model
                     'performer.name as performer_name',
                     'performer.avatar as performer_avatar',
                     
-                ])
+                ])->sortBy('quest.created_at')
                 ->all();
             $performer = [];
             $customer = [];
+            
             foreach($res as $quest){
-                if ($quest->customer_id == $this->id){
-                    $customer[] = $quest;
-                } else {
-                    $performer[] = $quest;
+                if ($gang = $this->_findGang($quest->gang_id)) {
+                    $gang->quests[] = $quest;
                 }
             }
-
-            $this->avaliable_quests = $performer;
-            $this->created_quests = $customer;
         } catch (Exception $e){
             throw $e;
         }
         return $this;
+    }
+
+    private function _findGang($id)
+    {
+        if (isset($this->gangs) && is_array($this->gangs)){
+            foreach ($this->gangs as $gang){
+                if ($gang->id === $id) 
+                    return $gang;
+            }
+        }
+        return null;
     }
 
     public function inGang($gang_id) : bool
@@ -136,5 +135,11 @@ class Hero extends Model
             if($gang->id == $gang_id) return true;
         }
         return false;
+    }
+
+    public function addStyle(int $style) : Hero
+    {
+        $this->style += $style;
+        return $this;
     }
 }
