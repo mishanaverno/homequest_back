@@ -29,7 +29,8 @@ class Gang extends Model
 
     private function _getStandartReward() : int
     {
-        return 10;
+        $res = DB::table('quest')->get()->count();
+        return $res * 10;
     }
 
     public function setCreator($hero_id)
