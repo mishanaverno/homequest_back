@@ -70,7 +70,7 @@ abstract class Model
     {
         if(is_array($values)){
             foreach($values as $column => $value){
-                if ((array_key_exists($column, $this->columns) || $column == 'id') && $value){
+                if ((array_key_exists($column, $this->columns) || $column == 'id') && isset($value)){
                     $this->{$column} = $value;
                 }
             }

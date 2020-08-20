@@ -35,7 +35,6 @@ class Hero extends Model
                 ->where("hero.{$column}", $value)
                 ->get(['hero.*'])
                 ->first();
-
             $result['gangs'] = DB::table('gang_hero')
                 ->leftJoin('gang','gang_hero.gang_id','gang.id')
                 ->where('gang_hero.hero_id', $result['id'])
@@ -146,7 +145,7 @@ class Hero extends Model
 
     public function removeStyle(int $style) : Hero
     {
-        if ($this->style < $style) throw new Exception("Not enought styly", APIResponse::CODE_INVALID_DATA);
+        if ((int) $this->style < $style) throw new Exception("Not enought style", APIResponse::CODE_INVALID_DATA);
         $this->style -= $style;
         return $this;
     }
