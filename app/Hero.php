@@ -23,7 +23,8 @@ class Hero extends Model
     ];
 
     protected $hidden = [
-        'password'
+        'password',
+        'api_token'
     ];
 
     protected function _get($value, $column): array
