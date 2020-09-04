@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Gang;
 use App\Hero;
 use App\Lib\APIResponse;
+use App\Lib\Token;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,7 @@ class HeroController extends Controller
     public function showSelf(Request $request)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'))->getQuests();
+            $hero = Hero::findByApiToken(Token::get($request))->getQuests();
             APIResponse::found($hero);
         } catch (Exception $e){
             APIResponse::fail($e);
@@ -82,7 +83,7 @@ class HeroController extends Controller
     public function update(Request $request)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $hero->setBulk($request->all())->save();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Hero updated")->complete($hero);
         } catch (Exception $e){

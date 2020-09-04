@@ -53,8 +53,12 @@ class APIResponse
 
     public function complete($data = null){
         if ($data) $this->setData($data);
-        
+        header('Access-Control-Allow-Methods: POST, GET, PUT');
         header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Credentials: true');
+        
+        
         echo json_encode($this->shalowCopy());
     }
 
