@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Lib\APIResponse;
+use App\Lib\Avatar\Gravatar;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,8 @@ class Hero extends Model
     protected $columns = [
         'name' => Model::COLUMN_SIMPLE,
         'login' => Model::COLUMN_SIMPLE,
-        'avatar' => Model::COLUMN_SIMPLE,
+        'email' => Model::COLUMN_SIMPLE,
+        'avatar' => Model::COLUMN_IMMUTABLE,
         'gang' => Model::COLUMN_VIRTUAL,
         'password' => Model::COLUMN_IMMUTABLE,
         'api_token' => Model::COLUMN_IMMUTABLE,
@@ -26,11 +28,16 @@ class Hero extends Model
         'password',
         'api_token'
     ];
-
+    public function __construct()
+    {
+        $this->avatarGenerator = new Gravatar();
+    }
+    public function generateAvatar(){
+        $this->avatar = $this->avatarGenerator->generate($this->email);
+    }
     protected function _get($value, $column): array
     {
         try{
-            
             $result = (array) DB::table('hero')
                 ->where("hero.{$column}", $value)
                 ->get(['hero.*'])
@@ -40,7 +47,6 @@ class Hero extends Model
                 ->where('gang_hero.hero_id', $result['id'])
                 ->get(['gang.id','gang.name'])->all();
             return $result;
-
         } catch (Exception $e){
             throw $e;
         }

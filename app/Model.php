@@ -109,9 +109,11 @@ abstract class Model
         }
         return $this;
     }
+    protected function _beforeSave(){}
 
     public function save()
     {
+        $this->_beforeSave();
         $values = [];
         foreach($this->columns as $column => $type){
             if (isset($this->{$column})){
