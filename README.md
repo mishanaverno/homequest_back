@@ -1,4 +1,4 @@
-# HomeQuest Back-end v 0.1.1
+# HomeQuest Back-end v 0.1.2
 **API:**
 | Verb | Path                 | Action   | Description | Params |
 |------|----------------------|----------|-------------|--------|
@@ -10,7 +10,7 @@
 | GET  | /gang/{id}           | show     | полчить данные о банде | |
 | GET  | /gang/{id}/invite    | invite   | создать код приглашения в банду | |
 | PUT  | /gang/{id}           | update   | изменить данные о банде | name |
-| POST | /hero                | store    | создать героя | login, name, avatar, gangId |
+| POST | /hero                | store    | создать героя | login, name, email, gangId, password |
 | PUT  | /hero                | update   | изменить данные о герое | login, name, avatar |
 | GET  | /hero                | showSelf | показать данные о авторизованном герое | |
 | GET  | /hero/{id}           | show     | показать данные о герое | |
