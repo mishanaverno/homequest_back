@@ -35,7 +35,7 @@ class Hero extends Model
     }
     public function generateAvatar() : Hero
     {
-        $this->avatar = $this->avatarGenerator->generate($this->email);
+        $this->avatar = $this->avatarGenerator->generate($this->login);
         return $this;
     }
     protected function _get($value, $column): array
