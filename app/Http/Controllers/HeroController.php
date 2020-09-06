@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Gang;
 use App\Hero;
 use App\Lib\APIResponse;
 use App\Lib\Token;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class HeroController extends Controller
 {
