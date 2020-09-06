@@ -12,6 +12,7 @@ class Hero extends Model
     const TOKEN_LENGTH = 60;
 
     protected $table = 'hero';
+    protected $avatarGenerator;
     protected $columns = [
         'name' => Model::COLUMN_SIMPLE,
         'login' => Model::COLUMN_SIMPLE,
@@ -28,8 +29,9 @@ class Hero extends Model
         'password',
         'api_token'
     ];
-    public function __construct()
+    public function __construct($id)
     {
+        parent::__construct($id);
         $this->avatarGenerator = new Gravatar();
     }
     public function generateAvatar() : Hero

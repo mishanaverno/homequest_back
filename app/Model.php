@@ -109,11 +109,9 @@ abstract class Model
         }
         return $this;
     }
-    protected function _beforeSave(){}
 
     public function save()
     {
-        $this->_beforeSave();
         $values = [];
         foreach($this->columns as $column => $type){
             if (isset($this->{$column})){
@@ -121,7 +119,6 @@ abstract class Model
                 $values[$column] = $this->{$column};
             }
         }
-        $values = $this->_morph($values);
         if(empty($values)) throw new Exception("Empty values", APIResponse::CODE_VALUES_NOT_PASSED);
 
         $values['updated_at'] = date('Y-m-d H:i:s');
@@ -136,9 +133,6 @@ abstract class Model
             throw $e;
         }
         return $this;
-    }
-    protected function _morph($values){
-        return $values;
     }
     public function isFound() : Bool
     {
