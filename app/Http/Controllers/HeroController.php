@@ -33,7 +33,7 @@ class HeroController extends Controller
         try{
             $hero = Hero::make()
                 ->setBulk($request->except('password'))
-                ->generateApiToken()
+                ->generateAvatar()
                 ->setPassword($request->get('password'))
                 ->generateApiToken()
                 ->save();
