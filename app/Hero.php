@@ -16,7 +16,6 @@ class Hero extends Model
     protected $columns = [
         'name' => Model::COLUMN_SIMPLE,
         'login' => Model::COLUMN_SIMPLE,
-        'email' => Model::COLUMN_SIMPLE,
         'avatar' => Model::COLUMN_IMMUTABLE,
         'gang' => Model::COLUMN_VIRTUAL,
         'password' => Model::COLUMN_IMMUTABLE,
