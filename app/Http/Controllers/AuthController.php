@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Hero;
 use App\Lib\APIResponse;
+use App\Lib\Token;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try{
-            Hero::findByApiToken($request->cookie('api_token'))->generateApiToken()->save();
+            Hero::findByApiToken(Token::get($request))->generateApiToken()->save();
             APIResponse::make(200)->setMsg('Logout complete')->complete();
         } catch (Exception $e){
             APIResponse::fail($e);

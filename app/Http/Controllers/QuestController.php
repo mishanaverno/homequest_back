@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Gang;
 use App\Hero;
 use App\Lib\APIResponse;
+use App\Lib\Token;
 use App\Quest;
 use Exception;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class QuestController extends Controller
     {
         try {
             $gang_id = $request->get('gang_id');
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             if(!$hero->inGang($gang_id)) throw new Exception("Hero not joined into defined gang", APIResponse::CODE_INVALID_DATA);
             $gang = Gang::find($gang_id);
             $reward = (int) $request->get('reward');
@@ -54,9 +55,10 @@ class QuestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         try {
+            $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
             APIResponse::found($quest);
         } catch (Exception $e){
@@ -74,7 +76,7 @@ class QuestController extends Controller
     public function update(Request $request, $id)
     {   
         try {
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
             if ($hero->getId() !== $quest->customer_id) throw new Exception("Hero is not customer of this quest", APIResponse::CODE_NOT_PERMISSIONED);
             
@@ -95,7 +97,7 @@ class QuestController extends Controller
     public function progress(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
             $quest->progress($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest started by @{$hero->login}")->complete($quest);
@@ -114,7 +116,7 @@ class QuestController extends Controller
     public function pending(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
             $quest->pending($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest pending by @{$hero->login}")->complete($quest);
@@ -133,7 +135,7 @@ class QuestController extends Controller
     public function complete(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
             DB::beginTransaction();
             $quest->complete($hero->getId());
@@ -156,7 +158,7 @@ class QuestController extends Controller
     public function decline(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
             $quest->decline($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest declined by @{$hero->login}")->complete($quest);
@@ -175,7 +177,7 @@ class QuestController extends Controller
     public function reopen(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
             $quest->reopen($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest reopened by @{$hero->login}")->complete($quest);
@@ -194,7 +196,7 @@ class QuestController extends Controller
     public function delete(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             Quest::find($id)->delete($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest delited by @{$hero->login}")->complete();
         } catch (Exception $e){

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Gang;
 use App\Hero;
 use App\Lib\APIResponse;
+use App\Lib\Token;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,7 @@ class GangController extends Controller
     public function store(Request $request)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $gang = Gang::make()->setBulk($request->all())->save()->setCreator($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Gang : element created")->complete($gang);
         }catch(Exception $e){
@@ -46,9 +47,10 @@ class GangController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         try{
+            $hero = Hero::findByApiToken(Token::get($request));
             $gang = Gang::find($id);
             APIResponse::found($gang);
         } catch (Exception $e) {
@@ -66,7 +68,7 @@ class GangController extends Controller
     public function update(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $gang = Gang::find($id);
             if ($hero->getId() != $gang->creator) throw new Exception("Hero is not creator", APIResponse::CODE_NOT_PERMISSIONED);
             $gang->setBulk($request->all())->save();
@@ -79,7 +81,7 @@ class GangController extends Controller
     public function join(Request $request)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             $gang = Gang::findByInviteCode($request->get('code'))->joinHero($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Hero @{$hero->login} Joined")->complete($gang);
         } catch (Exception $e){
@@ -90,7 +92,7 @@ class GangController extends Controller
     public function invite(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken($request->cookie('api_token'));
+            $hero = Hero::findByApiToken(Token::get($request));
             if (!$hero->inGang($id)) throw new Exception("Hero not joined to this gang", APIResponse::CODE_INVALID_DATA);
             $code = Gang::find($id)->createInvite();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Invite created by @{$hero->login}")->complete($code);
@@ -98,25 +100,4 @@ class GangController extends Controller
             APIResponse::fail($e);
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function heroes($id)
-    {
-        try{
-            $gang = Gang::find($id);
-            $result = DB::table('gang_hero')
-                ->join('hero', 'hero.id', '=', 'gang_hero.id')
-                ->select([
-                    'hero.id', 'hero.login', 'hero.name', 'hero.avatar'
-                ])->where('gang_id',$gang->getId())->get();
-            APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Heroes found")->complete($result);
-        }catch (Exception $e){
-            APIResponse::fail($e);
-        }
-    }
-
 }

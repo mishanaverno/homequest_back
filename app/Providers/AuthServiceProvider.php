@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Hero;
+use App\Lib\Token;
 use Exception;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -35,8 +36,8 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->app['auth']->viaRequest('api', function (Request $request) {
             try{
-                if ($request->cookie('api_token')) {
-                    return Hero::findByApiToken($request->cookie('api_token'));
+                if (Token::get($request)) {
+                    return Hero::findByApiToken(Token::get($request));
                 }
             } catch (Exception $e){
                 return null;
