@@ -34,9 +34,12 @@ class GangController extends Controller
     {
         try{
             $hero = Hero::findByApiToken(Token::get($request));
-            $gang = Gang::make()->setBulk($request->all())->setCreator($hero->getId())->save();
+            DB::beginTransaction();
+            $gang = Gang::make()->setBulk($request->all())->setCreator($hero->getId())->save()->joinHero($hero->getId());
+            DB::commit();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Gang : element created")->complete($gang);
         }catch(Exception $e){
+            DB::rollBack();
             APIResponse::fail($e);
         }
     }
