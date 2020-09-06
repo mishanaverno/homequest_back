@@ -83,7 +83,10 @@ class Hero extends Model
         $this->set('api_token', $token);
         return $this;
     }
-
+    public function getApiToken() : string 
+    {
+        return $this->api_token;
+    }
     private function checkToken($token){
         return (bool) DB::table($this->table)->where('api_token',$token)->first();
     }

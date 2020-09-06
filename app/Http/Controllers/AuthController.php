@@ -20,7 +20,7 @@ class AuthController extends Controller
             $hero = Hero::findByLogin($login);
             if (password_verify($password, $hero->password)){
                 $hero->generateApiToken()->save();
-                APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Login success')->complete($hero->api_token);
+                APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Login success')->complete($hero->getApiToken());
             } else {
                 throw new Exception("Login failed", APIResponse::CODE_NOT_AUTH);
             }

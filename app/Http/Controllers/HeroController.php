@@ -37,7 +37,7 @@ class HeroController extends Controller
                 ->setPassword($request->get('password'))
                 ->generateApiToken()
                 ->save();
-            APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Hero created')->complete($hero);
+            APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Hero created')->complete($hero->getApiToken());
         }catch (Exception $e){
             APIResponse::fail($e);
         }
