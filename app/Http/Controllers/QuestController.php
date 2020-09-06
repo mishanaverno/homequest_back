@@ -137,9 +137,11 @@ class QuestController extends Controller
         try{
             $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
+            $gang = Gang::find($quest->getId());
             DB::beginTransaction();
             $quest->complete($hero->getId());
             $hero->addStyle($quest->reward)->save();
+            $gang->incCompleted()->save();
             DB::commit();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest complete by @{$hero->login}")->complete($quest);
         } catch (Exception $e){

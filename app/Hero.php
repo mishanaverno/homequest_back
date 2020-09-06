@@ -45,10 +45,15 @@ class Hero extends Model
                 ->where("hero.{$column}", $value)
                 ->get(['hero.*'])
                 ->first();
-            $result['gangs'] = DB::table('gang_hero')
+            $gangs = DB::table('gang_hero')
                 ->leftJoin('gang','gang_hero.gang_id','gang.id')
                 ->where('gang_hero.hero_id', $result['id'])
-                ->get(['gang.id','gang.name'])->all();
+                ->get(['gang.id','gang.name', 'gang.completed'])->all();
+            foreach($gangs as $gang){
+                $gang->reward = Gang::calcReward($gang->completed);
+                unset($gang->completed);
+            }
+            $result['gangs'] = $gangs;
             return $result;
         } catch (Exception $e){
             throw $e;
@@ -116,8 +121,6 @@ class Hero extends Model
                     
                 ])->sortBy('quest.created_at')
                 ->all();
-            $performer = [];
-            $customer = [];
             
             foreach($res as $quest){
                 if ($gang = $this->_findGang($quest->gang_id)) {

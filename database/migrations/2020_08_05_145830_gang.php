@@ -15,8 +15,9 @@ class Gang extends Migration
     {
         Schema::create('gang', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('creator')->unsigned();
             $table->string('name', 255);
+            $table->bigInteger('creator')->unsigned();
+            $table->integer('completed')->unsigned()->default(0);
             $table->timestamps();
         });
     }

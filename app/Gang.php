@@ -13,32 +13,30 @@ class Gang extends Model
     protected $columns = [
         'name' => Model::COLUMN_SIMPLE,
         'creator' => Model::COLUMN_IMMUTABLE,
-        'standart_reward' => Model::COLUMN_VIRTUAL
+        'completed' => Model::COLUMN_IMMUTABLE,
     ];
-
+    public static function calcReward($completed){
+        return ($completed * 10) + 10;
+    }
     protected function _get($value, $column) : array
     {   
         try{
             $res = (array) DB::table($this->table)->where($column, $value)->get()->first();
-            $res['standart_reward'] = $this->_getStandartReward();
             return $res;
         } catch (Exception $e){
             throw $e;
         }
     }
-
-    private function _getStandartReward() : int
-    {
-        $res = DB::table('quest')->get()->count();
-        return ($res * 10) + 10;
-    }
-
     public function setCreator($hero_id) : Gang
     {
         $this->creator = $hero_id;
         return $this;
     }
-
+    public function incCompleted() : Gang
+    {
+        $this->completed++;
+        return $this;
+    }
     public function joinHero($hero_id)
     {
         try{

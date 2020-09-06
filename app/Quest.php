@@ -128,4 +128,8 @@ class Quest extends Model
         $this->set('gang_id', $gang);
         return $this;
     }
+    public function getGangId()
+    {
+        return $this->gang_id;
+    } 
 }
