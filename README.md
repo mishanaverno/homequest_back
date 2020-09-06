@@ -5,12 +5,12 @@
 | GET  | /                    | Closure  |            |
 | POST | /login               | login    | войти в систему | login, password |
 | POST | /logout              | logout   | выйти из системы | |
-| POST | /gang                | store    | создать банду | name, hero_id |
+| POST | /gang                | store    | создать банду | name |
 | POST | /gang/join           | join     | Добавить героя в банду | code |
 | GET  | /gang/{id}           | show     | полчить данные о банде | |
 | GET  | /gang/{id}/invite    | invite   | создать код приглашения в банду | |
 | PUT  | /gang/{id}           | update   | изменить данные о банде | name |
-| POST | /hero                | store    | создать героя | login, name, email, gangId, password |
+| POST | /hero                | store    | создать героя | login, name, email, password |
 | PUT  | /hero                | update   | изменить данные о герое | login, name, avatar |
 | GET  | /hero                | showSelf | показать данные о авторизованном герое | |
 | GET  | /hero/{id}           | show     | показать данные о герое | |

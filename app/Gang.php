@@ -33,9 +33,10 @@ class Gang extends Model
         return ($res * 10) + 10;
     }
 
-    public function setCreator($hero_id)
+    public function setCreator($hero_id) : Gang
     {
         $this->creator = $hero_id;
+        return $this;
     }
 
     public function joinHero($hero_id)
