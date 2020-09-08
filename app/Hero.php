@@ -50,7 +50,7 @@ class Hero extends Model
                 ->where('gang_hero.hero_id', $result['id'])
                 ->get(['gang.id','gang.name', 'gang.completed'])->all();
             foreach($gangs as $gang){
-                $gang->reward = Gang::calcReward($gang->completed);
+                $gang->reward = Gang::calcBaseReward($gang->completed);
                 unset($gang->completed);
             }
             $result['gangs'] = $gangs;

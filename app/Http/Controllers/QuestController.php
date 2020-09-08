@@ -32,14 +32,14 @@ class QuestController extends Controller
     public function store(Request $request)
     {
         try {
-            $gang_id = $request->get('gang_id');
             $hero = Hero::findByApiToken(Token::get($request));
+            $gang_id = $request->get('gang_id');
             if(!$hero->inGang($gang_id)) throw new Exception("Hero not joined into defined gang", APIResponse::CODE_INVALID_DATA);
             $gang = Gang::find($gang_id);
             $reward = (int) $request->get('reward');
             DB::beginTransaction();
             $hero->removeStyle($reward)->save();
-            $reward += $gang->standart_reward;
+            $reward += $gang->getBaseReward();
             $quest = Quest::make()->setBulk($request->except('reward'))->setBulk(['reward' => $reward])->create($hero->getId(), $gang->getId());
             DB::commit();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Quest created')->complete($quest);

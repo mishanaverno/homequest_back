@@ -15,7 +15,10 @@ class Gang extends Model
         'creator' => Model::COLUMN_IMMUTABLE,
         'completed' => Model::COLUMN_IMMUTABLE,
     ];
-    public static function calcReward($completed){
+    public function getBaseReward(){
+        return self::calcBaseReward($this->completed);
+    }
+    public static function calcBaseReward($completed){
         return ($completed * 10) + 10;
     }
     protected function _get($value, $column) : array
