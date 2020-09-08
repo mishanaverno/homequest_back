@@ -15,7 +15,7 @@ class Hero extends Migration
     {
         Schema::create('hero', function (Blueprint $table) {
             $table->id();
-            $table->string('login', 20)->unique();
+            $table->string('login', 100)->unique();
             $table->string('name', 100)->nullable();
             $table->integer('style')->unsigned()->default(10);
             $table->string('avatar', 255)->unique();
