@@ -152,7 +152,7 @@ abstract class Model
     
     public function toArray() : array
     {
-        $array = [];
+        $array = ['id' => $this->id];
         foreach ($this as $column => $value){
             if (array_key_exists($column, $this->columns) && !in_array($column, $this->hidden)) $array[$column] = $value;
         }

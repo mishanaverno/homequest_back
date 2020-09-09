@@ -26,6 +26,7 @@ class Hero extends Model
 
     protected $hidden = [
         'password',
+        'login',
         'api_token'
     ];
     public function __construct($id)
