@@ -36,11 +36,10 @@ class QuestController extends Controller
             $gang_id = $request->get('gang_id');
             if(!$hero->inGang($gang_id)) throw new Exception("Hero not joined into defined gang", APIResponse::CODE_INVALID_DATA);
             $gang = Gang::find($gang_id);
-            $reward = (int) $request->get('reward');
+            $bonus_reward = (int) $request->get('bonus_reward');
             DB::beginTransaction();
-            $hero->removeStyle($reward)->save();
-            $reward += $gang->getBaseReward();
-            $quest = Quest::make()->setBulk($request->except('reward'))->setBulk(['reward' => $reward])->create($hero->getId(), $gang->getId());
+            $hero->removeStyle($bonus_reward)->save();
+            $quest = Quest::make()->setBulk($request->all())->create($hero->getId(), $gang->getId());
             DB::commit();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg('Quest created')->complete($quest);
         } catch (Exception $e){
@@ -140,7 +139,7 @@ class QuestController extends Controller
             $gang = Gang::find($quest->getId());
             DB::beginTransaction();
             $quest->complete($hero->getId());
-            $hero->addStyle($quest->reward)->save();
+            $hero->addStyle($quest->base_reward + $quest->bonus_reward)->save();
             $gang->incCompleted()->save();
             DB::commit();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest complete by @{$hero->login}")->complete($quest);
@@ -199,7 +198,9 @@ class QuestController extends Controller
     {
         try{
             $hero = Hero::findByApiToken(Token::get($request));
-            Quest::find($id)->delete($hero->getId());
+            $quest = Quest::find($id);
+            $hero->addStyle($quest->bonus_reward);
+            $quest->delete($hero->getId());
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest delited by @{$hero->login}")->complete();
         } catch (Exception $e){
             APIResponse::fail($e);

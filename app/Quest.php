@@ -18,7 +18,8 @@ class Quest extends Model
     protected $columns = [
         'title' => Model::COLUMN_SIMPLE,
         'description' => Model::COLUMN_SIMPLE,
-        'reward' => Model::COLUMN_SIMPLE,
+        'base_reward' => Model::COLUMN_SIMPLE,
+        'bonus_reward' => Model::COLUMN_SIMPLE,
         'state' => Model::COLUMN_IMMUTABLE,
         'performer_id' => Model::COLUMN_IMMUTABLE,
         'customer_id' => Model::COLUMN_IMMUTABLE,

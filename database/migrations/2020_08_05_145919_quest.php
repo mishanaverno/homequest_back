@@ -20,7 +20,8 @@ class Quest extends Migration
             $table->bigInteger('gang_id')->unsigned();
             $table->string('title', 100);
             $table->string('description',255);
-            $table->integer('reward')->unsigned();
+            $table->integer('base_reward')->unsigned();
+            $table->integer('bonus_reward')->unsigned();
             $table->enum('state',['open', 'progress', 'pending', 'complete', 'declined'])->default('open');
             $table->timestamps();
         });

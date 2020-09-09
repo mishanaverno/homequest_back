@@ -14,7 +14,7 @@
 | PUT  | /hero                | update   | изменить данные о герое | login, name, avatar |
 | GET  | /hero                | showSelf | показать данные о авторизованном герое | |
 | GET  | /hero/{id}           | show     | показать данные о герое | |
-| POST | /quest               | store    | создать квест | title, description, reward, gang_id |
+| POST | /quest               | store    | создать квест | title, description, base_reward, bonus_reward, gang_id |
 | GET  | /quest/{id}          | show     | показать данные квеста | |
 | PUT  | /quest/{id}          | update   | обновить данные квеста | title, description, reward |
 | PUT  | /quest/{id}/progress | progress | взять квест | |
