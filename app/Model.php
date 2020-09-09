@@ -154,7 +154,7 @@ abstract class Model
     {
         $array = [];
         foreach ($this as $column => $value){
-            if(!in_array($column, ['columns', 'table', 'hidden']) && !in_array($column, $this->hidden)) $array[$column] = $value;
+            if (array_key_exists($column, $this->columns) && !in_array($column, $this->hidden)) $array[$column] = $value;
         }
         return $array;
     }

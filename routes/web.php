@@ -17,8 +17,8 @@ Route::group(['middleware' => 'auth'], function(){
 
 
     Route::put('/hero', 'HeroController@update');
-    Route::get('/hero', 'HeroController@showSelf');
     Route::get('/hero/{id}', 'HeroController@show');
+    Route::get('/hero', 'HeroController@showSelf');
 
     Route::post('/quest', 'QuestController@store');
     Route::get('/quest/{id}', 'QuestController@show');

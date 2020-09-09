@@ -19,7 +19,7 @@ class Gang extends Model
         return self::calcBaseReward($this->completed);
     }
     public static function calcBaseReward($completed){
-        return ($completed * 10) + 10;
+        return max([(round(log1p($completed) * 10)), 10]);
     }
     protected function _get($value, $column) : array
     {   

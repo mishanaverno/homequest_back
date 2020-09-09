@@ -47,10 +47,10 @@ class HeroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         try{
-            $hero = Hero::find($id);
+            $hero = Hero::findByApiToken(Token::get($request));
             APIResponse::found($hero);
         } catch (Exception $e){
             APIResponse::fail($e);
