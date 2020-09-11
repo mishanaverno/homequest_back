@@ -70,7 +70,7 @@ class Quest extends Model
     {
         if (!$this->isPending()) throw new Exception("Quest are not pending", APIResponse::CODE_INVALID_STATE);
         if ($this->customer_id !== $heroId) throw new Exception("Hero is not a customer of this quest", APIResponse::CODE_NOT_PERMISSIONED);
-        $this->setPerformerId(NULL)->setState(Quest::STATE_OPEN)->save();
+        $this->setPerformerId(0)->setState(Quest::STATE_OPEN)->save();
         return $this;
     }
 
@@ -78,7 +78,7 @@ class Quest extends Model
     {
         if (!$this->isProgress()) throw new Exception('Quest are not open', APIResponse::CODE_INVALID_STATE);
         if ($this->performer_id !== $heroId) throw new Exception("Hero is not a customer of this quest", APIResponse::CODE_NOT_PERMISSIONED);
-        $this->setState(Quest::STATE_OPEN)->setPerformerId(null)->save();
+        $this->setState(Quest::STATE_OPEN)->setPerformerId(0)->save();
         return $this;
     }
 

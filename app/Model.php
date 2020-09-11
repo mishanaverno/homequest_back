@@ -104,7 +104,7 @@ abstract class Model
      */
     public function set(string $column, $value)
     {
-        if ($value && array_key_exists($column, $this->columns)){
+        if (array_key_exists($column, $this->columns)){
             $this->{$column} = $value;
         }
         return $this;
