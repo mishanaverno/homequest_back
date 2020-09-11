@@ -136,7 +136,7 @@ class QuestController extends Controller
         try{
             $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
-            $gang = Gang::find($quest->getId());
+            $gang = Gang::find($quest->getGangId());
             DB::beginTransaction();
             $quest->complete($hero->getId());
             $hero->addStyle($quest->base_reward + $quest->bonus_reward)->save();
