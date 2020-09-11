@@ -78,7 +78,7 @@ class Quest extends Model
     {
         if (!$this->isProgress()) throw new Exception('Quest are not open', APIResponse::CODE_INVALID_STATE);
         if ($this->performer_id !== $heroId) throw new Exception("Hero is not a customer of this quest", APIResponse::CODE_NOT_PERMISSIONED);
-        $this->setState(Quest::STATE_OPEN)->save();
+        $this->setState(Quest::STATE_OPEN)->setPerformerId(null)->save();
         return $this;
     }
 
