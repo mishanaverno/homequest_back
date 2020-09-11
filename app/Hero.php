@@ -39,6 +39,9 @@ class Hero extends Model
         $this->avatar = $this->avatarGenerator->generate($this->login);
         return $this;
     }
+    protected function _getGangs(){
+
+    }
     protected function _get($value, $column): array
     {
         try{
@@ -95,7 +98,7 @@ class Hero extends Model
     private function checkToken($token){
         return (bool) DB::table($this->table)->where('api_token',$token)->first();
     }
-    public function getQuests() : Hero
+    public function getDashboard() : Hero
     {
         try{
             $res = DB::table('quest')
@@ -107,7 +110,7 @@ class Hero extends Model
                                 ->from('gang_hero')
                                 ->where('gang_hero.hero_id', $this->id);
                         });
-                })
+                })->where('quest.state','<>','complete')
                 ->leftJoin('hero as customer', 'customer.id','quest.customer_id')
                 ->leftJoin('hero as performer', 'performer.id','quest.performer_id')
                 ->get([
@@ -133,7 +136,38 @@ class Hero extends Model
         }
         return $this;
     }
-
+    public function getProfile() : Hero
+    {
+        try{
+            $res = DB::table('quest')
+                ->where('quest.customer_id',$this->id)
+                ->orWhere('quest.performer_id',$this->id)
+                ->where('quest.state','=','complete')
+                ->leftJoin('hero as customer', 'customer.id','quest.customer_id')
+                ->leftJoin('hero as performer', 'performer.id','quest.performer_id')
+                ->get([
+                    
+                    'quest.*',
+                    'customer.id as customer_id',
+                    'customer.name as customer_name',
+                    'customer.avatar as customer_avatar',
+                    'performer.id as performer_id',
+                    'performer.name as performer_name',
+                    'performer.avatar as performer_avatar',
+                    
+                ])->sortBy('quest.created_at')
+                ->all();
+            
+            foreach($res as $quest){
+                if ($gang = $this->_findGang($quest->gang_id)) {
+                    $gang->quests[] = $quest;
+                }
+            }
+        } catch (Exception $e){
+            throw $e;
+        }
+        return $this;
+    }
     private function _findGang($id)
     {
         if (isset($this->gangs) && is_array($this->gangs)){

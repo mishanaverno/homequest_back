@@ -50,7 +50,7 @@ class HeroController extends Controller
     public function show(Request $request, $id)
     {
         try{
-            $hero = Hero::findByApiToken(Token::get($request));
+            $hero = Hero::find($id)->getProfile();
             APIResponse::found($hero);
         } catch (Exception $e){
             APIResponse::fail($e);
@@ -65,7 +65,7 @@ class HeroController extends Controller
     public function showSelf(Request $request)
     {
         try{
-            $hero = Hero::findByApiToken(Token::get($request))->getQuests();
+            $hero = Hero::findByApiToken(Token::get($request))->getDashboard();
             APIResponse::found($hero);
         } catch (Exception $e){
             APIResponse::fail($e);
