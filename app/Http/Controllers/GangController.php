@@ -54,7 +54,7 @@ class GangController extends Controller
     {
         try{
             $hero = Hero::findByApiToken(Token::get($request));
-            $gang = Gang::find($id);
+            $gang = Gang::find($id)->getHeroes();
             APIResponse::found($gang);
         } catch (Exception $e) {
             APIResponse::fail($e);

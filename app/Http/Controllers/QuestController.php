@@ -199,10 +199,13 @@ class QuestController extends Controller
         try{
             $hero = Hero::findByApiToken(Token::get($request));
             $quest = Quest::find($id);
-            $hero->addStyle($quest->bonus_reward);
+            DB::beginTransaction();
+            $hero->addStyle($quest->bonus_reward)->save();
             $quest->delete($hero->getId());
+            DB::commit();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Quest delited by @{$hero->login}")->complete();
         } catch (Exception $e){
+            DB::rollBack();
             APIResponse::fail($e);
         }
     }

@@ -140,9 +140,8 @@ class Hero extends Model
     {
         try{
             $res = DB::table('quest')
-                ->where('quest.customer_id',$this->id)
-                ->orWhere('quest.performer_id',$this->id)
-                ->where('quest.state','=','complete')
+                ->where('quest.performer_id',$this->id)
+                ->where('quest.state','complete')
                 ->leftJoin('hero as customer', 'customer.id','quest.customer_id')
                 ->leftJoin('hero as performer', 'performer.id','quest.performer_id')
                 ->get([

@@ -14,6 +14,7 @@ class Gang extends Model
         'name' => Model::COLUMN_SIMPLE,
         'creator' => Model::COLUMN_IMMUTABLE,
         'completed' => Model::COLUMN_IMMUTABLE,
+        'heroes' => Model::COLUMN_VIRTUAL
     ];
     public function getBaseReward(){
         return self::calcBaseReward($this->completed);
@@ -77,5 +78,21 @@ class Gang extends Model
         $model->setFromDB($result);
         DB::table('invite')->where('code', $code)->delete();
         return $model;
+    }
+    public function getHeroes() : Gang
+    {
+        $heroes = DB::table('gang_hero')
+            ->where('gang_hero.gang_id', $this->id)
+            ->leftJoin('hero', 'hero.id', 'gang_hero.hero_id')
+            ->get([
+                'hero.id',
+                'hero.name',
+                'hero.avatar',
+                'hero.style',
+                'hero.created_at',
+            ])
+            ->all();
+        $this->heroes = $heroes;
+        return $this;
     }
 }
