@@ -82,7 +82,9 @@ class HeroController extends Controller
     public function update(Request $request)
     {
         try{
+            $pass = $request->post('password');
             $hero = Hero::findByApiToken(Token::get($request));
+            if($pass) $hero->setPassword($pass);
             $hero->setBulk($request->all())->save();
             APIResponse::make(APIResponse::CODE_SUCCESS)->setMsg("Hero updated")->complete($hero);
         } catch (Exception $e){
