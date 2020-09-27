@@ -40,4 +40,13 @@ class AuthController extends Controller
             APIResponse::fail($e);
         }
     }
+    public function info(Request $request)
+    {
+        try{
+            $hero = Hero::findByApiToken(Token::get($request));
+            APIResponse::make(200)->setMsg('Hero found complete')->complete($hero->getAccountInformation());
+        } catch (Exception $e){
+            APIResponse::fail($e);
+        }
+    }
 }

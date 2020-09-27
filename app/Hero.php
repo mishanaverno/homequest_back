@@ -6,6 +6,7 @@ use App\Lib\APIResponse;
 use App\Lib\Avatar\Gravatar;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class Hero extends Model
 {
@@ -197,5 +198,13 @@ class Hero extends Model
         if ((int) $this->style < $style) throw new Exception("Not enought style", APIResponse::CODE_INVALID_DATA);
         $this->style -= $style;
         return $this;
+    }
+    public function getAccountInformation() : object
+    {
+        $obj = new stdClass;
+        $obj->id = $this->id;
+        $obj->login = $this->login;
+        $obj->name = $this->name;
+        return $obj;
     }
 }

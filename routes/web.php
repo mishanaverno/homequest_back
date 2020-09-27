@@ -8,6 +8,7 @@ Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout');
 Route::post('/hero', 'HeroController@store');
 Route::group(['middleware' => 'auth'], function(){
+    Route::get('/info', 'AuthController@info');
     Route::post('/gang', 'GangController@store');
     Route::post('/gang/join', 'GangController@join');
     Route::get('/gang/{id}', 'GangController@show'); //??

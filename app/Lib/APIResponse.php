@@ -15,6 +15,7 @@ class APIResponse
     const CODE_NOT_FOUND = 404;
     const CODE_INVALID_STATE = 405;
     const CODE_INVALID_DATA = 401;
+    const CODE_NON_UNIQ_VALUE = 406;
 
     protected $code;
     protected $msg;
